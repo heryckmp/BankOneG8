@@ -76,7 +76,12 @@ export function formatAmount(amount: number): string {
   return formatter.format(amount);
 }
 
-export const parseStringify = (value: any) => JSON.parse(JSON.stringify(value));
+export const parseStringify = (value: any) => {
+  if (value === undefined || value === null) {
+    return null;
+  }
+  return JSON.parse(JSON.stringify(value));
+};
 
 export const removeSpecialCharacters = (value: string) => {
   return value.replace(/[^\w\s]/gi, "");
@@ -195,17 +200,33 @@ export const getTransactionStatus = (date: Date) => {
   return date > twoDaysAgo ? "Processing" : "Success";
 };
 
-export const authFormSchema = (type: string) => z.object({
-  // sign up
-  firstName: type === 'sign-in' ? z.string().optional() : z.string().min(3),
-  lastName: type === 'sign-in' ? z.string().optional() : z.string().min(3),
-  address1: type === 'sign-in' ? z.string().optional() : z.string().max(50),
-  city: type === 'sign-in' ? z.string().optional() : z.string().max(50),
-  state: type === 'sign-in' ? z.string().optional() : z.string().min(2).max(2),
-  postalCode: type === 'sign-in' ? z.string().optional() : z.string().min(3).max(6),
-  dateOfBirth: type === 'sign-in' ? z.string().optional() : z.string().min(3),
-  ssn: type === 'sign-in' ? z.string().optional() : z.string().min(3),
-  // both
-  email: z.string().email(),
-  password: z.string().min(8),
-})
+export const authFormSchema = (type: string) => {
+  const baseSchema = {
+    email: z.string().email({ message: 'Please enter a valid email address' }),
+    password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+  }
+
+  if (type === 'sign-up') {
+    return z.object({
+      ...baseSchema,
+      firstName: z.string().min(1, { message: 'First name is required' }),
+      lastName: z.string().min(1, { message: 'Last name is required' }),
+      address1: z.string().min(1, { message: 'Address is required' }),
+      city: z.string().min(1, { message: 'City is required' }),
+      state: z.string()
+        .length(2, { message: 'State must be a 2-letter code (e.g., NY)' })
+        .toUpperCase()
+        .regex(/^[A-Z]{2}$/, { message: 'State must be a valid 2-letter code (e.g., NY)' }),
+      postalCode: z.string()
+        .length(5, { message: 'Postal code must be 5 digits' })
+        .regex(/^\d{5}$/, { message: 'Postal code must contain only numbers' }),
+      dateOfBirth: z.string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Date must be in YYYY-MM-DD format' }),
+      ssn: z.string()
+        .min(4, { message: 'SSN must be at least 4 digits' })
+        .regex(/^\d+$/, { message: 'SSN must contain only numbers' }),
+    })
+  }
+
+  return z.object(baseSchema)
+}

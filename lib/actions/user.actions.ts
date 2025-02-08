@@ -9,6 +9,7 @@ import { CountryCode, ProcessorTokenCreateRequest, ProcessorTokenCreateRequestPr
 import { plaidClient } from '@/lib/plaid';
 import { revalidatePath } from "next/cache";
 import { addFundingSource, createDwollaCustomer } from "./dwolla.actions";
+import { Client, Account } from "node-appwrite";
 
 const {
   APPWRITE_DATABASE_ID: DATABASE_ID,
@@ -18,48 +19,116 @@ const {
 
 export const getUserInfo = async ({ userId }: getUserInfoProps) => {
   try {
+    console.log('Getting user info for userId:', userId);
     const { database } = await createAdminClient();
 
-    const user = await database.listDocuments(
+    const userDocs = await database.listDocuments(
       DATABASE_ID!,
       USER_COLLECTION_ID!,
       [Query.equal('userId', [userId])]
-    )
+    );
 
-    return parseStringify(user.documents[0]);
-  } catch (error) {
-    console.log(error)
+    console.log('Found documents:', userDocs.total);
+
+    if (userDocs.total === 0) {
+      throw new Error(`No user document found for userId: ${userId}`);
+    }
+
+    return parseStringify(userDocs.documents[0]);
+  } catch (error: any) {
+    console.error('getUserInfo error:', {
+      message: error.message,
+      code: error.code,
+      type: error.type,
+      response: error.response,
+      userId
+    });
+    throw error;
   }
 }
 
 export const signIn = async ({ email, password }: signInProps) => {
   try {
-    const { account } = await createAdminClient();
-    const session = await account.createEmailPasswordSession(email, password);
+    console.log('Attempting to sign in with email:', email);
+    const client = new Client()
+      .setEndpoint('https://cloud.appwrite.io/v1')
+      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
+    
+    const account = new Account(client);
+    
+    // Try to create session
+    console.log('Creating email password session...');
+    try {
+      const session = await account.createEmailPasswordSession(email, password);
+      console.log('Session created successfully for userId:', session.userId);
 
-    cookies().set("appwrite-session", session.secret, {
-      path: "/",
-      httpOnly: true,
-      sameSite: "strict",
-      secure: true,
+      // Set session cookie with more permissive settings for development
+      cookies().set("appwrite-session", session.secret, {
+        path: "/",
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 24 * 7 // 7 days
+      });
+
+      // Get user info
+      console.log('Getting user info...');
+      const user = await getUserInfo({ userId: session.userId });
+      if (!user) {
+        throw new Error('User document not found in database');
+      }
+      console.log('User info retrieved successfully');
+      return parseStringify(user);
+    } catch (sessionError: any) {
+      console.error('Session creation error:', {
+        message: sessionError.message,
+        code: sessionError.code,
+        type: sessionError.type,
+        response: sessionError.response,
+        stack: sessionError.stack
+      });
+      throw sessionError;
+    }
+  } catch (error: any) {
+    console.error('Auth error details:', {
+      message: error.message,
+      code: error.code,
+      type: error.type,
+      response: error.response,
+      stack: error.stack
     });
 
-    const user = await getUserInfo({ userId: session.userId }) 
-
-    return parseStringify(user);
-  } catch (error) {
-    console.error('Error', error);
+    // Handle specific Appwrite error codes
+    if (error.code === 401) {
+      throw new Error('Invalid email or password. Please try again.');
+    } else if (error.code === 429) {
+      throw new Error('Too many attempts. Please try again later.');
+    } else {
+      throw new Error(error.message || 'Something went wrong. Please try again.');
+    }
   }
 }
 
 export const signUp = async ({ password, ...userData }: SignUpParams) => {
-  const { email, firstName, lastName } = userData;
+  const { 
+    email, 
+    firstName, 
+    lastName,
+    address1,
+    city,
+    state,
+    postalCode,
+    dateOfBirth,
+    ssn
+  } = userData;
   
   let newUserAccount;
 
   try {
+    console.log('Creating admin client...');
     const { account, database } = await createAdminClient();
 
+    console.log('Creating user account...');
     newUserAccount = await account.create(
       ID.unique(), 
       email, 
@@ -67,29 +136,33 @@ export const signUp = async ({ password, ...userData }: SignUpParams) => {
       `${firstName} ${lastName}`
     );
 
-    if(!newUserAccount) throw new Error('Error creating user')
+    if(!newUserAccount) {
+      console.error('Failed to create user account');
+      throw new Error('Error creating user account')
+    }
 
-    const dwollaCustomerUrl = await createDwollaCustomer({
-      ...userData,
-      type: 'personal'
-    })
-
-    if(!dwollaCustomerUrl) throw new Error('Error creating Dwolla customer')
-
-    const dwollaCustomerId = extractCustomerIdFromUrl(dwollaCustomerUrl);
-
+    console.log('Creating user document...');
     const newUser = await database.createDocument(
       DATABASE_ID!,
       USER_COLLECTION_ID!,
       ID.unique(),
       {
-        ...userData,
         userId: newUserAccount.$id,
-        dwollaCustomerId,
-        dwollaCustomerUrl
+        firstName,
+        lastName,
+        email,
+        address1,
+        city,
+        state,
+        postalCode,
+        dateOfBirth,
+        ssn,
+        dwollaCustomerId: 'temp-disabled',
+        dwollaCustomerUrl: 'temp-disabled'
       }
     )
 
+    console.log('Creating session...');
     const session = await account.createEmailPasswordSession(email, password);
 
     cookies().set("appwrite-session", session.secret, {
@@ -99,9 +172,16 @@ export const signUp = async ({ password, ...userData }: SignUpParams) => {
       secure: true,
     });
 
+    console.log('Sign up completed successfully');
     return parseStringify(newUser);
-  } catch (error) {
-    console.error('Error', error);
+  } catch (error: any) {
+    console.error('Sign up error:', {
+      message: error.message,
+      code: error.code,
+      type: error.type,
+      response: error.response
+    });
+    throw error;
   }
 }
 
@@ -291,5 +371,100 @@ export const getBankByAccountId = async ({ accountId }: getBankByAccountIdProps)
     return parseStringify(bank.documents[0]);
   } catch (error) {
     console.log(error)
+  }
+}
+
+export const deleteAllUsers = async () => {
+  try {
+    const { user: userClient, database } = await createAdminClient();
+    
+    // List all users
+    const users = await userClient.list();
+    
+    // Delete each user and their associated documents
+    for (const user of users.users) {
+      try {
+        // Delete user documents from database
+        const userDocs = await database.listDocuments(
+          DATABASE_ID!,
+          USER_COLLECTION_ID!,
+          [Query.equal('userId', [user.$id])]
+        );
+
+        for (const doc of userDocs.documents) {
+          await database.deleteDocument(
+            DATABASE_ID!,
+            USER_COLLECTION_ID!,
+            doc.$id
+          );
+        }
+
+        // Delete the user account
+        await userClient.delete(user.$id);
+        console.log(`Deleted user: ${user.email}`);
+      } catch (error) {
+        console.error(`Error deleting user ${user.email}:`, error);
+      }
+    }
+
+    return { success: true, message: 'All users deleted successfully' };
+  } catch (error) {
+    console.error('Error deleting users:', error);
+    return { success: false, message: 'Failed to delete users' };
+  }
+}
+
+export const createUserDocument = async ({
+  userId,
+  email,
+  firstName = "User",
+  lastName = "",
+  address1 = "",
+  city = "",
+  state = "",
+  postalCode = "",
+  dateOfBirth = "",
+  ssn = ""
+}: {
+  userId: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  address1?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  dateOfBirth?: string;
+  ssn?: string;
+}) => {
+  try {
+    console.log('Creating user document for userId:', userId);
+    const { database } = await createAdminClient();
+
+    const newUser = await database.createDocument(
+      DATABASE_ID!,
+      USER_COLLECTION_ID!,
+      ID.unique(),
+      {
+        userId,
+        firstName,
+        lastName,
+        email,
+        address1,
+        city,
+        state,
+        postalCode,
+        dateOfBirth,
+        ssn,
+        dwollaCustomerId: 'temp-disabled',
+        dwollaCustomerUrl: 'temp-disabled'
+      }
+    );
+
+    console.log('User document created successfully');
+    return parseStringify(newUser);
+  } catch (error: any) {
+    console.error('Error creating user document:', error);
+    throw error;
   }
 }
