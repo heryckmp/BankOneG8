@@ -11,11 +11,32 @@ interface TotalBalanceBoxProps {
   totalCurrentBalance: number;
 }
 
+// Demo data
+const demoAccounts = [
+  {
+    id: 'demo1',
+    name: 'Conta Corrente',
+    currentBalance: 2800,
+    availableBalance: 2800
+  },
+  {
+    id: 'demo2',
+    name: 'Conta Poupança',
+    currentBalance: 1800,
+    availableBalance: 1800
+  }
+];
+
 const TotalBalanceBox = ({ 
-  accounts,
+  accounts: realAccounts,
   totalBanks,
   totalCurrentBalance
 }: TotalBalanceBoxProps) => {
+  // Use demo data if no real accounts exist
+  const accounts = realAccounts?.length > 0 ? realAccounts : demoAccounts;
+  const demoTotalBanks = realAccounts?.length > 0 ? totalBanks : demoAccounts.length;
+  const demoTotalBalance = realAccounts?.length > 0 ? totalCurrentBalance : 4600;
+
   return (
     <div className="flex flex-col gap-8">
       {/* Header Section */}
@@ -34,7 +55,7 @@ const TotalBalanceBox = ({
               className="object-contain p-1 brightness-[3] invert-0"
             />
             <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-[10px] text-white font-semibold">
-              {totalBanks}
+              {demoTotalBanks}
             </div>
           </div>
           <div>
@@ -59,7 +80,7 @@ const TotalBalanceBox = ({
             />
           </div>
           <span className="text-gray-700 font-medium">
-            Total Banks: <span className="text-blue-600">{totalBanks}</span>
+            Total Banks: <span className="text-blue-600">{demoTotalBanks}</span>
           </span>
         </motion.div>
       </motion.div>
@@ -90,7 +111,7 @@ const TotalBalanceBox = ({
             <div>
               <p className="text-blue-100 text-sm">Total Balance</p>
               <h2 className="text-4xl font-bold">
-                $<AnimatedCounter value={totalCurrentBalance} />
+                $<AnimatedCounter value={demoTotalBalance} />
               </h2>
             </div>
           </div>
