@@ -216,10 +216,13 @@ export const authFormSchema = (type: string) => {
       state: z.string()
         .length(2, { message: 'State must be a 2-letter code (e.g., NY)' })
         .toUpperCase()
-        .regex(/^[A-Z]{2}$/, { message: 'State must be a valid 2-letter code (e.g., NY)' }),
+        .refine((val) => /^[A-Z]{2}$/.test(val), {
+          message: 'State must be a valid 2-letter code (e.g., NY)'
+        }),
       postalCode: z.string()
-        .length(5, { message: 'Postal code must be 5 digits' })
-        .regex(/^\d{5}$/, { message: 'Postal code must contain only numbers' }),
+        .min(5, { message: 'Postal code must be at least 5 digits' })
+        .max(8, { message: 'Postal code must not exceed 8 digits' })
+        .regex(/^\d+$/, { message: 'Postal code must contain only numbers' }),
       dateOfBirth: z.string()
         .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Date must be in YYYY-MM-DD format' }),
       ssn: z.string()

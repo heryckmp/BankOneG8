@@ -55,11 +55,48 @@ export const createDwollaCustomer = async (
   newCustomer: NewDwollaCustomerParams
 ) => {
   try {
-    return await dwollaClient
-      .post("customers", newCustomer)
-      .then((res) => res.headers.get("location"));
-  } catch (err) {
-    console.error("Creating a Dwolla Customer Failed: ", err);
+    // Ensure state is uppercase and exactly 2 characters
+    const formattedCustomer = {
+      ...newCustomer,
+      state: newCustomer.state.trim().toUpperCase()
+    };
+
+    console.log('Attempting to create Dwolla customer with data:', {
+      ...formattedCustomer,
+      ssn: '****' // Mask sensitive data in logs
+    });
+    
+    // Validate state format
+    if (!/^[A-Z]{2}$/.test(formattedCustomer.state)) {
+      throw new Error(`Invalid state format: ${formattedCustomer.state}. Must be a 2-letter abbreviation.`);
+    }
+    
+    const response = await dwollaClient.post("customers", formattedCustomer);
+    console.log('Dwolla API Response Status:', response.status);
+    console.log('Dwolla API Response Headers:', response.headers);
+    
+    const location = response.headers.get('location');
+    if (!location) {
+      // Try to get more details from the response
+      const resBody = await (response as any).text();
+      console.error('Dwolla API Response Body:', resBody);
+      console.error('Dwolla API Response Headers:', response.headers);
+      throw new Error('Failed to create Dwolla customer: No location header in response');
+    }
+    return location;
+  } catch (err: any) {
+    console.error("Creating a Dwolla Customer Failed. Details:", {
+      error: err.message,
+      code: err.code,
+      status: err?.status,
+      response: err?.response,
+      stack: err?.stack,
+      customerData: {
+        ...newCustomer,
+        ssn: '****' // Mask sensitive data in logs
+      }
+    });
+    throw err;
   }
 };
 

@@ -142,6 +142,25 @@ export const signUp = async ({ password, ...userData }: SignUpParams) => {
     }
 
     console.log('Creating user document...');
+    const dwollaCustomerUrl = await createDwollaCustomer({
+      firstName,
+      lastName,
+      email,
+      address1,
+      city,
+      state,
+      postalCode,
+      dateOfBirth,
+      ssn,
+      type: 'personal'
+    });
+
+    if (!dwollaCustomerUrl) {
+      throw new Error('Failed to create Dwolla customer');
+    }
+
+    const dwollaCustomerId = extractCustomerIdFromUrl(dwollaCustomerUrl);
+
     const newUser = await database.createDocument(
       DATABASE_ID!,
       USER_COLLECTION_ID!,
@@ -157,8 +176,8 @@ export const signUp = async ({ password, ...userData }: SignUpParams) => {
         postalCode,
         dateOfBirth,
         ssn,
-        dwollaCustomerId: 'temp-disabled',
-        dwollaCustomerUrl: 'temp-disabled'
+        dwollaCustomerId,
+        dwollaCustomerUrl
       }
     )
 
@@ -190,11 +209,32 @@ export async function getLoggedInUser() {
     const { account } = await createSessionClient();
     const result = await account.get();
 
-    const user = await getUserInfo({ userId: result.$id})
+    try {
+      const user = await getUserInfo({ userId: result.$id });
+      return parseStringify(user);
+    } catch (error: any) {
+      // If the error indicates that the user document is not found, create a new one
+      if (error.message && error.message.includes('No user document found')) {
+        // Use result.name if available to split into firstName and lastName
+        const fullName = result.name || '';
+        const nameParts = fullName.split(' ');
+        const firstName = nameParts[0] || 'User';
+        const lastName = nameParts.slice(1).join(' ') || '';
 
-    return parseStringify(user);
+        const newUser = await createUserDocument({
+          userId: result.$id,
+          email: result.email,
+          firstName,
+          lastName
+          // Other fields will use default empty strings
+        });
+        return parseStringify(newUser);
+      } else {
+        throw error;
+      }
+    }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return null;
   }
 }
@@ -424,7 +464,9 @@ export const createUserDocument = async ({
   state = "",
   postalCode = "",
   dateOfBirth = "",
-  ssn = ""
+  ssn = "",
+  dwollaCustomerId = "temp-disabled",
+  dwollaCustomerUrl = "temp-disabled"
 }: {
   userId: string;
   email: string;
@@ -436,29 +478,34 @@ export const createUserDocument = async ({
   postalCode?: string;
   dateOfBirth?: string;
   ssn?: string;
+  dwollaCustomerId?: string;
+  dwollaCustomerUrl?: string;
 }) => {
   try {
     console.log('Creating user document for userId:', userId);
     const { database } = await createAdminClient();
 
+    // Ensure all required fields are present and match Appwrite collection structure
+    const documentData = {
+      userId,          // string
+      email,          // email type
+      firstName,      // string
+      lastName,       // string
+      address1,       // string
+      city,          // string
+      state,         // string
+      postalCode,    // string
+      dateOfBirth,   // string
+      ssn,           // string
+      dwollaCustomerId,  // string
+      dwollaCustomerUrl  // string
+    };
+
     const newUser = await database.createDocument(
       DATABASE_ID!,
       USER_COLLECTION_ID!,
       ID.unique(),
-      {
-        userId,
-        firstName,
-        lastName,
-        email,
-        address1,
-        city,
-        state,
-        postalCode,
-        dateOfBirth,
-        ssn,
-        dwollaCustomerId: 'temp-disabled',
-        dwollaCustomerUrl: 'temp-disabled'
-      }
+      documentData
     );
 
     console.log('User document created successfully');
