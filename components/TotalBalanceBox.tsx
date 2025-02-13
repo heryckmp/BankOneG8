@@ -16,14 +16,14 @@ const demoAccounts = [
   {
     id: 'demo1',
     name: 'Conta Corrente',
-    currentBalance: 2800,
-    availableBalance: 2800
+    currentBalance: 2888900,
+    availableBalance: 2888900
   },
   {
     id: 'demo2',
     name: 'Conta Poupança',
-    currentBalance: 1800,
-    availableBalance: 1800
+    currentBalance: 186300,
+    availableBalance: 186300
   }
 ];
 
@@ -35,7 +35,7 @@ const TotalBalanceBox = ({
   // Use demo data if no real accounts exist
   const accounts = realAccounts?.length > 0 ? realAccounts : demoAccounts;
   const demoTotalBanks = realAccounts?.length > 0 ? totalBanks : demoAccounts.length;
-  const demoTotalBalance = realAccounts?.length > 0 ? totalCurrentBalance : 4600;
+  const demoTotalBalance = realAccounts?.length > 0 ? totalCurrentBalance : 2888900;
 
   return (
     <div className="flex flex-col gap-8">
