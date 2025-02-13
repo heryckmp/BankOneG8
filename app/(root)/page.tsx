@@ -5,17 +5,14 @@ import TotalBalanceBox from '@/components/TotalBalanceBox';
 import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
 import Image from 'next/image';
+import { redirect } from 'next/navigation';
 
 const Home = async ({ searchParams: { id, page } }: SearchParamProps) => {
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
   
   if (!loggedIn) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <h1 className="text-2xl">Please sign in to view your dashboard</h1>
-      </div>
-    );
+    redirect('/sign-in');
   }
 
   const accounts = await getAccounts({ 

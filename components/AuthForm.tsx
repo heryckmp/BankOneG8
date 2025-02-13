@@ -207,8 +207,14 @@ const SignInForm = () => {
         throw new Error('Invalid email or password. Please try again.');
       }
 
-      setDebugInfo('Sign in successful!');
+      setDebugInfo('Sign in successful! Redirecting...');
+      
+      // Força a revalidação da página antes do redirecionamento
+      router.refresh();
+      
+      // Redireciona para a página inicial
       router.push('/');
+      
     } catch (error: any) {
       console.error('Auth error details:', {
         message: error.message,

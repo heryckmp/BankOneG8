@@ -12,7 +12,11 @@ export async function createSessionClient() {
     const session = cookies().get("appwrite-session");
 
     if (!session || !session.value) {
-      throw new Error("No session found");
+      return {
+        get account() {
+          return new Account(client);
+        },
+      };
     }
 
     client.setSession(session.value);
@@ -24,7 +28,16 @@ export async function createSessionClient() {
     };
   } catch (error) {
     console.error('Session client error:', error);
-    throw error;
+    // Return a client without session instead of throwing
+    const client = new Client()
+      .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
+      
+    return {
+      get account() {
+        return new Account(client);
+      },
+    };
   }
 }
 

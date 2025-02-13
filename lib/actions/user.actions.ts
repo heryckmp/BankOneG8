@@ -73,12 +73,30 @@ export const signIn = async ({ email, password }: signInProps) => {
 
       // Get user info
       console.log('Getting user info...');
-      const user = await getUserInfo({ userId: session.userId });
-      if (!user) {
-        throw new Error('User document not found in database');
+      try {
+        const user = await getUserInfo({ userId: session.userId });
+        console.log('User info retrieved successfully');
+        return parseStringify(user);
+      } catch (userError: any) {
+        // If user document doesn't exist, create it
+        if (userError.message && userError.message.includes('No user document found')) {
+          console.log('User document not found, creating new one...');
+          const accountDetails = await account.get();
+          const nameParts = accountDetails.name.split(' ');
+          const firstName = nameParts[0] || 'User';
+          const lastName = nameParts.slice(1).join(' ') || '';
+
+          const newUser = await createUserDocument({
+            userId: session.userId,
+            email: accountDetails.email,
+            firstName,
+            lastName
+          });
+          console.log('New user document created successfully');
+          return parseStringify(newUser);
+        }
+        throw userError;
       }
-      console.log('User info retrieved successfully');
-      return parseStringify(user);
     } catch (sessionError: any) {
       console.error('Session creation error:', {
         message: sessionError.message,
@@ -207,15 +225,20 @@ export const signUp = async ({ password, ...userData }: SignUpParams) => {
 export async function getLoggedInUser() {
   try {
     const { account } = await createSessionClient();
-    const result = await account.get();
-
+    
     try {
+      const result = await account.get();
       const user = await getUserInfo({ userId: result.$id });
       return parseStringify(user);
     } catch (error: any) {
+      // If there's no session or user is not logged in, return null
+      if (error.code === 401 || error.message?.includes('No session found')) {
+        return null;
+      }
+      
       // If the error indicates that the user document is not found, create a new one
       if (error.message && error.message.includes('No user document found')) {
-        // Use result.name if available to split into firstName and lastName
+        const result = await account.get();
         const fullName = result.name || '';
         const nameParts = fullName.split(' ');
         const firstName = nameParts[0] || 'User';
@@ -226,15 +249,14 @@ export async function getLoggedInUser() {
           email: result.email,
           firstName,
           lastName
-          // Other fields will use default empty strings
         });
         return parseStringify(newUser);
-      } else {
-        throw error;
       }
+      
+      throw error;
     }
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    console.error('getLoggedInUser error:', error);
     return null;
   }
 }
