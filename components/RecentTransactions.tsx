@@ -39,7 +39,7 @@ const demoTransactions: Transaction[] = [
     $id: 'plaid_txn_002',
     id: 'plaid_txn_002',
     accountId: 'demo_account',
-    name: 'Salário',
+    name: 'Salario',
     amount: 4500.00,
     date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',

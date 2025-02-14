@@ -44,27 +44,27 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
           disabled={!ready}
           className="plaidlink-primary"
         >
-          Connect bank
+          Conectar banco
         </Button>
       ): variant === 'ghost' ? (
         <Button onClick={() => open()} variant="ghost" className="plaidlink-ghost">
           <Image 
             src="/icons/connect-bank.svg"
-            alt="connect bank"
+            alt="conectar banco"
             width={24}
             height={24}
           />
-          <p className='hiddenl text-[16px] font-semibold text-black-2 xl:block'>Connect bank</p>
+          <p className='hiddenl text-[16px] font-semibold text-black-2 xl:block'>Conectar banco</p>
         </Button>
       ): (
         <Button onClick={() => open()} className="plaidlink-default">
           <Image 
             src="/icons/connect-bank.svg"
-            alt="connect bank"
+            alt="conectar banco"
             width={24}
             height={24}
           />
-          <p className='text-[16px] font-semibold text-black-2'>Connect bank</p>
+          <p className='text-[16px] font-semibold text-black-2'>Conectar banco</p>
         </Button>
       )}
     </>

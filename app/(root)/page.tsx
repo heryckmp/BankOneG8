@@ -31,7 +31,7 @@ const Home = async ({ searchParams: { id, page } }: SearchParamProps) => {
             <div className="absolute inset-0 h-[200px]">
               <Image
                 src="/images/welcomelay.jpg"
-                alt="Welcome background"
+                alt="Imagem de boas-vindas"
                 fill
                 className="object-cover opacity-25 brightness-110 contrast-125 saturate-150"
                 priority

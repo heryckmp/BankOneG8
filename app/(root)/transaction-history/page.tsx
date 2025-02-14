@@ -6,7 +6,7 @@ import BankDropdown from '@/components/BankDropdown';
 import TransactionsTable from '@/components/TransactionsTable';
 import { Pagination } from '@/components/Pagination';
 
-// Demo transactions data
+// Dados de transações demo
 const demoTransactions = [
   {
     id: 'plaid_txn_001',
@@ -14,7 +14,7 @@ const demoTransactions = [
     amount: 156.78,
     date: new Date().toISOString(),
     paymentChannel: 'in_store',
-    category: 'Food and Drink',
+    category: 'Alimentação',
     type: 'debit',
     merchant_name: 'Extra Supermercados',
     pending: false,
@@ -27,11 +27,11 @@ const demoTransactions = [
   },
   {
     id: 'plaid_txn_002',
-    name: 'Salario',
+    name: 'Salário',
     amount: 4500.00,
     date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',
-    category: 'Income',
+    category: 'Renda',
     type: 'credit',
     merchant_name: 'EMPRESA LTDA',
     pending: false,
@@ -44,7 +44,7 @@ const demoTransactions = [
     amount: 39.90,
     date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',
-    category: 'Entertainment',
+    category: 'Entretenimento',
     type: 'debit',
     merchant_name: 'NETFLIX.COM',
     pending: false,
@@ -57,7 +57,7 @@ const demoTransactions = [
     amount: 24.50,
     date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',
-    category: 'Transport',
+    category: 'Transporte',
     type: 'debit',
     merchant_name: 'UBER',
     pending: true,
@@ -69,11 +69,11 @@ const demoTransactions = [
   },
   {
     id: 'plaid_txn_005',
-    name: 'Drogaria Pacheco',
+    name: 'Drogaria São Paulo',
     amount: 89.90,
     date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'in_store',
-    category: 'Health',
+    category: 'Saúde',
     type: 'debit',
     merchant_name: 'DROGARIA SAO PAULO',
     pending: false,
@@ -86,11 +86,11 @@ const demoTransactions = [
   },
   {
     id: 'plaid_txn_006',
-    name: 'Amazon *PRIME',
+    name: 'Amazon Prime',
     amount: 14.90,
     date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',
-    category: 'Subscription',
+    category: 'Assinatura',
     type: 'debit',
     merchant_name: 'AMAZON PRIME',
     pending: false,
@@ -103,7 +103,7 @@ const demoTransactions = [
     amount: 250.00,
     date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',
-    category: 'Transfer',
+    category: 'Transferência',
     type: 'debit',
     merchant_name: 'PIX TRANSFER',
     pending: false,
@@ -112,11 +112,11 @@ const demoTransactions = [
   },
   {
     id: 'plaid_txn_008',
-    name: 'iFood *DELIVERY',
+    name: 'iFood Delivery',
     amount: 65.90,
     date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',
-    category: 'Food and Drink',
+    category: 'Alimentação',
     type: 'debit',
     merchant_name: 'IFOOD',
     pending: false,
@@ -132,7 +132,7 @@ const demoTransactions = [
     amount: 19.90,
     date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',
-    category: 'Entertainment',
+    category: 'Entretenimento',
     type: 'debit',
     merchant_name: 'SPOTIFY',
     pending: false,
@@ -141,11 +141,11 @@ const demoTransactions = [
   },
   {
     id: 'plaid_txn_010',
-    name: 'Rendimento',
+    name: 'Rendimento Poupança',
     amount: 23.45,
     date: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',
-    category: 'Interest',
+    category: 'Rendimento',
     type: 'credit',
     merchant_name: 'BANK INTEREST',
     pending: false,
@@ -170,7 +170,7 @@ const TransactionHistory = async ({ searchParams: { id, page } }: SearchParamPro
   const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
   const account = appwriteItemId ? await getAccount({ appwriteItemId }) : null;
 
-  // Use demo transactions if no real transactions exist
+  // Use transações demo se não houver transações reais
   const transactions = account?.transactions?.length > 0 ? account.transactions : demoTransactions;
   const rowsPerPage = 10;
   const totalPages = Math.ceil(transactions.length / rowsPerPage);
@@ -186,7 +186,7 @@ const TransactionHistory = async ({ searchParams: { id, page } }: SearchParamPro
           <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
             <Image
               src="/icons/transaction.svg"
-              alt="Transactions"
+              alt="Transações"
               width={24}
               height={24}
               className="opacity-70"

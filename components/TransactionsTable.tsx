@@ -119,7 +119,7 @@ const TransactionsTable = ({ transactions }: TransactionTableProps) => {
                 </TableCell>
 
                 <TableCell className="px-4 py-4 capitalize text-sm text-gray-500 max-md:hidden">
-                  {t.paymentChannel}
+                  {t.paymentChannel === 'online' ? 'Online' : 'Na loja'}
                 </TableCell>
 
                 <TableCell className="px-4 py-4 max-md:hidden">
