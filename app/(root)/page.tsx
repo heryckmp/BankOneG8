@@ -64,17 +64,6 @@ const Home = async ({ searchParams: { id, page } }: SearchParamProps) => {
           <div className="recent-transactions">
             <div className="flex items-center justify-between">
               <h3 className="recent-transactions-label">Recent Transactions</h3>
-              <button className="view-all-btn">
-                <div className="flex items-center gap-2">
-                  <span>View All</span>
-                  <Image 
-                    src="/icons/arrow-right.svg"
-                    alt="View all"
-                    width={16}
-                    height={16}
-                  />
-                </div>
-              </button>
             </div>
 
             <RecentTransactions 

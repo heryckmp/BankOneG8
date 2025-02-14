@@ -4,8 +4,6 @@ import { formatAmount } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import Copy from './Copy'
-import AccountBalance from './AccountBalance'
 
 interface BankCardProps {
   account: any;
@@ -13,66 +11,63 @@ interface BankCardProps {
   showBalance?: boolean;
 }
 
-const BankCard = ({ account, userName, showBalance = true }: BankCardProps) => {
-  console.log(account);
+const BankCard = ({ account, userName, showBalance = false }: BankCardProps) => {
   return (
-    <div className="flex flex-col">
-      <Link href={`/transaction-history/?id=${account.appwriteItemId}`} className="bank-card">
-        <div className="bank-card_content">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <Image 
-                src="/icons/bank.svg"
-                alt="Bank"
-                width={24}
-                height={24}
-                className="brightness-[3] invert-0"
-              />
-              <h3 className="text-16 font-semibold text-white">
-                {account.name}
-              </h3>
-            </div>
+    <Link href={`/transaction-history/?id=${account.appwriteItemId}`} 
+      className="block w-full max-w-[360px] h-[200px] rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 p-5 relative overflow-hidden hover:shadow-lg transition-all duration-300 group"
+    >
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-30">
+        <Image 
+          src="/icons/lines.png"
+          alt="Card pattern"
+          fill
+          className="object-cover"
+        />
+      </div>
 
-            {showBalance && (
-              <AccountBalance 
-                balance={account.currentBalance}
-                previousBalance={account.availableBalance}
-                currency="USD"
-              />
-            )}
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <p className="text-12 font-normal text-white/60">
-              Card Holder
-            </p>
-            <p className="text-14 font-medium text-white">
-              {userName}
-            </p>
-          </div>
-        </div>
-
-        <div className="bank-card_icon">
+      {/* Card Content */}
+      <div className="relative z-10 h-full flex flex-col justify-between">
+        <div className="flex justify-between items-start">
+          <h3 className="text-lg font-semibold text-white">
+            {account.name}
+          </h3>
           <Image 
-            src="/icons/visa.svg"
-            alt="Visa"
-            width={40}
+            src="/icons/copy.svg"
+            width={20}
             height={20}
-            className="brightness-[3] invert-0"
+            alt="Copy"
+            className="opacity-60 hover:opacity-100 cursor-pointer"
           />
         </div>
 
-        <Image 
-          src="/icons/lines.png"
-          width={316}
-          height={190}
-          alt="lines"
-          className="absolute top-0 left-0"
-        />
-      </Link>
+        <div className="space-y-4">
+          {/* Card Number */}
+          <div className="text-xl text-white tracking-wider font-medium">
+            1234 1234 1234 {account.mask || '1234'}
+          </div>
 
-      {showBalance && <Copy title={account?.sharaebleId} />}
-    </div>
+          {/* Card Footer */}
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-white/60 text-sm">Card Holder</p>
+              <p className="text-white text-sm font-medium">{userName}</p>
+            </div>
+            <div>
+              <p className="text-white/60 text-sm">Expires</p>
+              <p className="text-white text-sm font-medium">06/24</p>
+            </div>
+            <Image 
+              src="/icons/mastercard.svg"
+              width={40}
+              height={25}
+              alt="Mastercard"
+              className="brightness-200"
+            />
+          </div>
+        </div>
+      </div>
+    </Link>
   )
 }
 

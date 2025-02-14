@@ -75,11 +75,21 @@ declare type Transaction = {
   category: string;
   date: string;
   image: string;
-  type: string;
   $createdAt: string;
-  channel: string;
-  senderBankId: string;
-  receiverBankId: string;
+  $updatedAt: string;
+  $permissions: any[];
+  channel?: string;
+  senderBankId?: string;
+  receiverBankId?: string;
+  merchant_name?: string;
+  payment_method?: string;
+  transaction_code?: string;
+  recurring?: boolean;
+  location?: {
+    address?: string;
+    city?: string;
+    region?: string;
+  };
 };
 
 declare type Bank = {
