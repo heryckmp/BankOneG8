@@ -15,10 +15,10 @@ export default function RootLayout({
             <div className="auth-ben-image" />
             <div className="relative z-10 flex flex-col items-center justify-center h-full p-12 text-center">
               <h2 className="plaid-heading text-4xl mb-6 transition-colors duration-500 group-hover:text-white">
-                Welcome to OneG8
+                Bem-vindo ao OneG8
               </h2>
               <p className="text-gray-600 transition-colors duration-500 text-lg max-w-md group-hover:text-gray-300">
-                Your modern banking solution for seamless financial management and secure transactions.
+                Sua solução bancária moderna para uma gestão financeira simplificada e transações seguras.
               </p>
             </div>
           </div>

@@ -13,7 +13,7 @@ const ibmPlexSerif = IBM_Plex_Serif({
 
 export const metadata: Metadata = {
   title: "OneG8",
-  description: "OneG8 is a modern banking platform for everyone.",
+  description: "OneG8 é uma plataforma bancária moderna para todos.",
   icons: {
     icon: '/icons/logo.svg'
   }
