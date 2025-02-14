@@ -27,7 +27,7 @@ const demoTransactions = [
   },
   {
     id: 'plaid_txn_002',
-    name: 'Salário',
+    name: 'Salario',
     amount: 4500.00,
     date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',
@@ -53,7 +53,7 @@ const demoTransactions = [
   },
   {
     id: 'plaid_txn_004',
-    name: 'Uber *TRIP SAO PAULO',
+    name: 'Uber',
     amount: 24.50,
     date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',
@@ -69,7 +69,7 @@ const demoTransactions = [
   },
   {
     id: 'plaid_txn_005',
-    name: 'Drogaria São Paulo',
+    name: 'Drogaria Pacheco',
     amount: 89.90,
     date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'in_store',
@@ -86,7 +86,7 @@ const demoTransactions = [
   },
   {
     id: 'plaid_txn_006',
-    name: 'Amazon.com.br *PRIME',
+    name: 'Amazon *PRIME',
     amount: 14.90,
     date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',
@@ -141,7 +141,7 @@ const demoTransactions = [
   },
   {
     id: 'plaid_txn_010',
-    name: 'Rendimento Poupança',
+    name: 'Rendimento',
     amount: 23.45,
     date: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
     paymentChannel: 'online',
