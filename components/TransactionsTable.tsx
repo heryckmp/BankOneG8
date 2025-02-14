@@ -33,7 +33,7 @@ const EmptyState = () => (
         src="/icons/transaction.svg"
         width={32}
         height={32}
-        alt="No transactions"
+        alt="Sem transações"
         className="opacity-50"
       />
     </div>
@@ -86,7 +86,7 @@ const TransactionsTable = ({ transactions }: TransactionTableProps) => {
                         src={isDebit ? '/icons/arrow-down.svg' : '/icons/arrow-up.svg'}
                         width={20}
                         height={20}
-                        alt={isDebit ? 'debit' : 'credit'}
+                        alt={isDebit ? 'débito' : 'crédito'}
                         className={cn(
                           isDebit ? 'text-red-500' : 'text-green-500'
                         )}

@@ -50,7 +50,7 @@ const TotalBalanceBox = ({
           <div className="relative w-12 h-12 bg-blue-600 rounded-lg p-2 shadow-lg">
             <Image
               src="/icons/bank-transfer.svg"
-              alt="Bank Accounts"
+              alt="Contas Bancárias"
               fill
               className="object-contain p-1 brightness-[3] invert-0"
             />
@@ -60,9 +60,9 @@ const TotalBalanceBox = ({
           </div>
           <div>
             <h3 className="text-xl font-bold bg-gradient-to-r from-blue-900 to-blue-600 bg-clip-text text-transparent">
-              Bank Accounts
+              Contas Bancárias
             </h3>
-            <p className="text-sm text-gray-600">Manage your finances</p>
+            <p className="text-sm text-gray-600">Gerencie suas finanças</p>
           </div>
         </div>
 
@@ -74,13 +74,13 @@ const TotalBalanceBox = ({
           <div className="relative w-5 h-5">
             <Image
               src="/icons/dollar-circle.svg"
-              alt="Total banks"
+              alt="Total de bancos"
               fill
               className="object-contain"
             />
           </div>
           <span className="text-gray-700 font-medium">
-            Total Banks: <span className="text-blue-600">{demoTotalBanks}</span>
+            Total de Bancos: <span className="text-blue-600">{demoTotalBanks}</span>
           </span>
         </motion.div>
       </motion.div>
@@ -101,7 +101,7 @@ const TotalBalanceBox = ({
               <div className="relative w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
                 <Image 
                   src="/icons/coins.svg"
-                  alt="Balance"
+                  alt="Saldo"
                   width={20}
                   height={20}
                   className="object-contain brightness-200"
@@ -109,7 +109,7 @@ const TotalBalanceBox = ({
               </div>
             </div>
             <div>
-              <p className="text-blue-100 text-sm">Total Balance</p>
+              <p className="text-blue-100 text-sm">Saldo Total</p>
               <h2 className="text-4xl font-bold">
                 $<AnimatedCounter value={demoTotalBalance} />
               </h2>
@@ -128,7 +128,7 @@ const TotalBalanceBox = ({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          <h3 className="text-lg font-semibold text-gray-900">Account Distribution</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Distribuição de Contas</h3>
           {accounts.length > 0 ? accounts.map((account, index) => (
             <motion.div 
               key={account.id}
@@ -170,13 +170,13 @@ const TotalBalanceBox = ({
                   src="/icons/bank-transfer.svg"
                   width={24}
                   height={24}
-                  alt="No accounts"
+                  alt="Sem contas"
                   className="brightness-[3] invert-0"
                 />
               </div>
-              <p className="text-gray-500 text-center">No bank accounts connected yet.</p>
+              <p className="text-gray-500 text-center">Nenhuma conta bancária conectada ainda.</p>
               <button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                Add Bank Account
+                Adicionar Conta Bancária
               </button>
             </motion.div>
           )}

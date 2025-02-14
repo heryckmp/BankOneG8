@@ -1,15 +1,34 @@
-const HeaderBox = ({ type = "title", title, subtext, user }: HeaderBoxProps) => {
+import { cn } from '@/lib/utils'
+import React from 'react'
+
+interface HeaderBoxProps {
+  type?: 'title' | 'greeting';
+  title: string;
+  subtext: string;
+  user?: string;
+}
+
+const HeaderBox = ({ 
+  type = 'title',
+  title,
+  subtext,
+  user
+}: HeaderBoxProps) => {
   return (
     <div className="header-box">
-      <h1 className="header-box-title">
-        {title}
-        {type === 'greeting' && (
-          <span className="text-bankGradient">
-            &nbsp;{user}
-          </span>
+      <div className="header-box-title">
+        {type === 'greeting' ? (
+          <div className="flex items-center gap-2">
+            <h1>{title}</h1>
+            <span className="text-blue-600">{user}</span>
+          </div>
+        ) : (
+          <h1>{title}</h1>
         )}
-      </h1>
-      <p className="header-box-subtext">{subtext}</p>
+      </div>
+      <p className="header-box-subtext">
+        {subtext}
+      </p>
     </div>
   )
 }
