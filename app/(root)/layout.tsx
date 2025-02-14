@@ -16,7 +16,7 @@ export default async function RootLayout({
   }
 
   return (
-    <main className="flex min-h-screen w-full bg-gray-50">
+    <main className="flex min-h-screen w-full bg-gray-50" suppressHydrationWarning>
       <Sidebar user={user} />
       <section className="flex min-h-screen flex-1 flex-col">
         <div className="root-layout">

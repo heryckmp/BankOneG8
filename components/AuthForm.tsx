@@ -210,10 +210,13 @@ const SignInForm = () => {
       setDebugInfo('Sign in successful! Redirecting...');
       
       // Força a revalidação da página antes do redirecionamento
-      router.refresh();
+      await router.refresh();
       
-      // Redireciona para a página inicial
-      router.push('/');
+      // Aguarda um momento para garantir que a sessão foi estabelecida
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Redireciona para a página inicial com um hard refresh
+      window.location.replace('/');
       
     } catch (error: any) {
       console.error('Auth error details:', {

@@ -9,7 +9,7 @@ const demoAccounts = [
   {
     id: 'demo1',
     appwriteItemId: 'demo1',
-    name: 'Horizon Banking',
+    name: 'OneG8 Banking',
     currentBalance: 2840.40,
     availableBalance: 2840.40,
     type: 'depository',

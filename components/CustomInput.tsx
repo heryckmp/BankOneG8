@@ -16,25 +16,25 @@ const CustomInput = <T extends FieldValues>({
   label, 
   placeholder 
 }: CustomInputProps<T>) => {
+  const inputId = `${name}-input`;
+  
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
         <div className="form-item">
-          <FormLabel className="form-label">
+          <FormLabel htmlFor={inputId} className="form-label">
             {label}
           </FormLabel>
           <div className="flex w-full flex-col">
             <FormControl>
               <Input 
+                id={inputId}
                 placeholder={placeholder}
                 className="input-class"
                 type={name === 'password' ? 'password' : 'text'}
-                value={field.value || ''}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-                name={field.name}
+                {...field}
               />
             </FormControl>
             <FormMessage className="form-message mt-2" />

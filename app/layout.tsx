@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${ibmPlexSerif.variable} antialiased`}>
         <div className="gradient-bg fixed inset-0 opacity-5" />
         <main className="relative">

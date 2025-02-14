@@ -6,7 +6,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main className="flex min-h-screen w-full justify-between font-inter relative">
+    <main className="flex min-h-screen w-full justify-between font-inter relative" suppressHydrationWarning>
       <div className="absolute inset-0 main-gradient" />
       <div className="relative z-10 flex w-full">
         <div className="auth-asset group">
