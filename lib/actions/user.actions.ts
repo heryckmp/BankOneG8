@@ -62,14 +62,14 @@ export const signIn = async ({ email, password }: signInProps) => {
       const session = await account.createEmailPasswordSession(email, password);
       console.log('Session created successfully for userId:', session.userId);
 
-      // Atualização das configurações do cookie
-      const cookieStore = cookies();
-      cookieStore.set("appwrite-session", session.secret, {
-        secure: true,
+      // Set session cookie with more permissive settings for development
+      cookies().set("appwrite-session", session.secret, {
+        path: "/",
         httpOnly: true,
         sameSite: "lax",
-        path: "/",
-        maxAge: 60 * 60 * 24 * 7, // 7 dias
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        priority: "high"
       });
 
       // Get user info
@@ -203,14 +203,11 @@ export const signUp = async ({ password, ...userData }: SignUpParams) => {
     console.log('Creating session...');
     const session = await account.createEmailPasswordSession(email, password);
 
-    // Atualização das configurações do cookie no signup também
-    const cookieStore = cookies();
-    cookieStore.set("appwrite-session", session.secret, {
-      secure: true,
-      httpOnly: true,
-      sameSite: "lax",
+    cookies().set("appwrite-session", session.secret, {
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 dias
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
     });
 
     console.log('Sign up completed successfully');

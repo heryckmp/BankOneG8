@@ -3,7 +3,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
-import { Github } from 'lucide-react';
 
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -310,32 +309,43 @@ const AuthForm = ({ type }: AuthFormProps) => {
         <>
           {type === 'sign-up' ? <SignUpForm /> : <SignInForm />}
 
-          <footer className="flex flex-col items-center gap-4">
-            <div className="flex justify-center gap-1">
-              <p className="text-16 font-normal text-gray-600">
-                {type === 'sign-in'
-                ? "Don't have an account?"
-                : "Already have an account?"}
-              </p>
-              <Link href={type === 'sign-in' ? '/sign-up' : '/sign-in'} className="form-link">
-                {type === 'sign-in' ? 'Sign up' : 'Sign in'}
-              </Link>
-            </div>
-
-            <div className="flex flex-col items-center gap-2 mt-6">
-              <Link 
-                href="https://github.com/heryckmp/BankOneG8" 
-                target="_blank"
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <Github size={24} />
-                <span className="text-16">View on GitHub</span>
-              </Link>
-              <p className="text-14 text-gray-500 mt-1">
-                Created by <Link href="https://github.com/heryckmp" target="_blank" className="text-blue-600 hover:underline font-medium">Erick Moreira</Link>
-              </p>
-            </div>
+          <footer className="flex justify-center gap-1">
+            <p className="text-14 font-normal text-gray-600">
+              {type === 'sign-in'
+              ? "Don't have an account?"
+              : "Already have an account?"}
+            </p>
+            <Link href={type === 'sign-in' ? '/sign-up' : '/sign-in'} className="form-link">
+              {type === 'sign-in' ? 'Sign up' : 'Sign in'}
+            </Link>
           </footer>
+
+          <div className="flex flex-col items-center gap-2 mt-4">
+            <Link 
+              href="https://github.com/heryckmp/BankOneG8" 
+              target="_blank" 
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <Image
+                src="/icons/github.svg"
+                width={22}
+                height={22}
+                alt="GitHub icon"
+                className="text-current"
+              />
+              View on GitHub
+            </Link>
+            <p className="text-14 font-normal text-gray-600">
+              Created by{' '}
+              <Link 
+                href="https://github.com/heryckmp" 
+                target="_blank"
+                className="text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                Erick Moreira
+              </Link>
+            </p>
+          </div>
         </>
       )}
     </section>

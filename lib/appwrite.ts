@@ -5,19 +5,13 @@ import { cookies } from "next/headers";
 
 export async function createSessionClient() {
   try {
-    if (!process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || !process.env.NEXT_PUBLIC_APPWRITE_PROJECT) {
-      throw new Error('Appwrite configuration missing');
-    }
-
     const client = new Client()
-      .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT)
-      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT);
+      .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
 
-    const cookieStore = cookies();
-    const session = cookieStore.get("appwrite-session");
+    const session = cookies().get("appwrite-session");
 
-    if (!session?.value) {
-      console.log('No session cookie found');
+    if (!session || !session.value) {
       return {
         get account() {
           return new Account(client);
@@ -25,37 +19,23 @@ export async function createSessionClient() {
       };
     }
 
-    try {
-      client.setSession(session.value);
-      
-      // Teste a sessão
-      const account = new Account(client);
-      await account.get();
+    client.setSession(session.value);
 
-      return {
-        get account() {
-          return account;
-        },
-      };
-    } catch (sessionError) {
-      console.error('Invalid session:', sessionError);
-      // Remove o cookie inválido
-      cookieStore.delete("appwrite-session");
-      
-      return {
-        get account() {
-          return new Account(client);
-        },
-      };
-    }
-  } catch (error) {
-    console.error('Session client error:', error);
     return {
       get account() {
-        return new Account(new Client()
-          .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-          .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!)
-        );
+        return new Account(client);
+      },
+    };
+  } catch (error) {
+    console.error('Session client error:', error);
+    // Return a client without session instead of throwing
+    const client = new Client()
+      .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
+      
+    return {
+      get account() {
+        return new Account(client);
       },
     };
   }
