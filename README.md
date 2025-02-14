@@ -125,10 +125,6 @@ bank-one-g8/
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-## 👥 Autores
+## 👥 Autor
 
-- Erick Martins
-
-## 📞 Suporte
-
-Para suporte, envie um email para [seu-email@exemplo.com] ou abra uma issue no repositório. 
+- Erick Moreira
